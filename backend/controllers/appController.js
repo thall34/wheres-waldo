@@ -3,7 +3,7 @@ const db = require('../models/appModels');
 async function getHighScores(req, res, next) {
     try {
         const highScores = await db.getHighScores();
-        return highScores;
+        res.status(200).json(highScores);
     } catch(err) {
         next(err);
     };
@@ -20,7 +20,7 @@ async function getMap(req, res, next) {
             return null;
         };
 
-        return map;
+        res.status(200).json(map);
     } catch(err) {
         next(err);
     };
@@ -41,14 +41,21 @@ async function checkCoordinates(req, res, next) {
 
     try {
         const { xLeft, xRight, yTop, yBottom } = await db.checkCoordinates();
-        const { x, y, hitbox } = req.body;
+        const normalizedXLeft = parseFloat(((xLeft / 100) * dimensions.width).toFixed(2));
+        const normalizedXRight = parseFloat(((xRight / 100) * dimensions.width).toFixed(2));
+        const normalizedYTop = parseFloat(((yTop / 100) * dimensions.height).toFixed(2));
+        const normalizedYBottom = parseFloat(((yBottom / 100) * dimensions.height).toFixed(2));
+        const { selectionCoords, hitbox, dimensions } = req.body;
+        const { width, height } = dimensions;
+        const { x, y } = selectionCoords;
         const hitboxPad = hitbox / 2
-        if (x <= xRight + hitboxPad && 
-            x >= xLeft - hitboxPad && 
-            y >= yTop - hitboxPad && 
-            y <= yBottom + hitboxPad) {
+        if (x <= normalizedXRight + (hitboxPad / 2) && 
+            x >= normalizedXLeft - (hitboxPad / 2) && 
+            y >= normalizedYTop - (hitboxPad / 2) && 
+            y <= normalizedYBottom + (hitboxPad / 2)) 
+        {
             return true;
-        };
+        }
 
         return false;
     } catch(err) {
@@ -56,12 +63,12 @@ async function checkCoordinates(req, res, next) {
     };
 };
 
-async function getCharacterTotal(req, res, next) {
+async function getCharacters(req, res, next) {
     const mapId = req.validatedId;
 
     try {
         const characters = await db.getCharactersForMap(mapId);
-        return characters.length;
+        res.status(200).json(characters)
     } catch(err) {
         next(err);
     };
@@ -70,7 +77,6 @@ async function getCharacterTotal(req, res, next) {
 async function updateFinalScore(req, res, next) {
     const gameId = req.validatedId;
     const { name, endTime, duration } = req.body;
-    const 
 
     try {
         const update = await db.updateGame(name, endTime, duration, gameId);
@@ -90,6 +96,6 @@ module.exports = {
     getMap,
     createGame,
     checkCoordinates,
-    getCharacterTotal,
+    getCharacters,
     updateFinalScore,
 }

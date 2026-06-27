@@ -41,6 +41,10 @@ async function getCharacterById(id) {
 async function getCharactersForMap(mapId) {
     const characters = await prisma.character.findMany({
         where: { mapId: mapId },
+        select: {
+            id: true,
+            name: true,
+        }
     });
 
     return characters;
