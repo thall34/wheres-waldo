@@ -6,9 +6,56 @@
 
 generator client {
   provider = "prisma-client-js"
-  output   = "../generated/prisma"
 }
 
 datasource db {
   provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Map {
+  id Int @id @default(autoincrement())
+  name String
+  cloudinaryPath  String
+  cloudinaryId  String
+
+  characters Character[]
+  games Game[]
+}
+
+model Character {
+  id  Int @id @default(autoincrement())
+  mapId Int
+  name String
+  xLeft Int
+  xRight Int
+  yTop Int
+  yBottom Int
+
+  map  Map @relation(fields: [mapId], references: [id], onDelete: Cascade)
+
+  foundCharacters FoundCharacter[]
+}
+
+model Game {
+  id  Int @id @default(autoincrement())
+  userId String
+  mapId Int
+  startTime DateTime @default(now())
+  endTime DateTime?
+  duration DateTime?
+
+  map Map @relation(fields: [mapId], references: [id], onDelete: Cascade)
+
+  foundCharacters FoundCharacter[]
+}
+
+model FoundCharacter {
+  gameId Int
+  characterId Int
+
+  game Game @relation(fields: [gameId], references: [id], onDelete: Cascade)
+  character Character @relation(fields: [characterId], references: [id], onDelete: Cascade)
+
+  @@id([gameId, characterId])
 }
