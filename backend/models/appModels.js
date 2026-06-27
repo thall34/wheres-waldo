@@ -7,6 +7,8 @@ async function getHighScores() {
             duration: 'asc',
         },
     });
+
+    return highScores;
 };
 
 async function getMap(id) {
@@ -32,12 +34,29 @@ async function getCharacterById(id) {
     const character = await prisma.character.findUnique({
         where: { id: id },
     });
+
+    return character;
 };
 
 async function getCharactersForMap(mapId) {
     const characters = await prisma.character.findMany({
         where: { mapId: mapId },
     });
+
+    return characters;
+};
+
+async function updateFinalScore(name, endTime, duration, gameId) {
+    const update = await prisma.game.update({
+        where: { id: gameId },
+        data: { 
+            userId: name,
+            endTime: endTime,
+            duration: duration,
+        },
+    });
+
+    return update;
 };
 
 module.exports = {
@@ -46,4 +65,5 @@ module.exports = {
     createGame,
     getCharacterById,
     getCharactersForMap,
+    updateFinalScore,
 }
