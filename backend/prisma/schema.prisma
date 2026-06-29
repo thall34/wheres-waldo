@@ -43,7 +43,7 @@ model Game {
   mapId Int
   startTime DateTime @default(now())
   endTime DateTime?
-  duration DateTime?
+  duration Int?
 
   map Map @relation(fields: [mapId], references: [id], onDelete: Cascade)
 

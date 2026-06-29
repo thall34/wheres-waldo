@@ -1,4 +1,4 @@
-async function getMapUrl(id) {
+async function getMap(id) {
     try {
         const response = await fetch(`http://localhost:3000/api/map/${id}`);
 
@@ -7,10 +7,10 @@ async function getMapUrl(id) {
         };
 
         const map = await response.json();
-        return map.cloudinaryPath;
+        return map;
     } catch (err) {
         return err;
     };
 };
 
-export default getMapUrl;
+export default getMap;

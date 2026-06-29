@@ -3,13 +3,12 @@ const db = require('../models/appModels');
 async function getHighScores(req, res, next) {
     try {
         const highScores = await db.getHighScores();
-        res.status(200).json(highScores);
+        return res.status(200).json(highScores);
     } catch(err) {
         next(err);
     };
 };
 
-// may have to limit what I return from this so frontend cant expose characters and coordinates
 async function getMap(req, res, next) {
     const id = req.validatedId;
 
@@ -20,7 +19,7 @@ async function getMap(req, res, next) {
             return null;
         };
 
-        res.status(200).json(map);
+        return res.status(200).json(map);
     } catch(err) {
         next(err);
     };
@@ -31,7 +30,12 @@ async function createGame(req, res, next) {
 
     try {
         const game = await db.createGame(mapId);
-        return game.id;
+
+        if (!game) {
+            return null;
+        };
+
+        return res.status(200).json(game);
     } catch(err) {
         next(err);
     };
@@ -40,26 +44,45 @@ async function checkCoordinates(req, res, next) {
     const id = req.validatedId;
 
     try {
-        const { xLeft, xRight, yTop, yBottom } = await db.checkCoordinates();
+        const { xLeft, xRight, yTop, yBottom } = await db.getCharacterById(id);
+        const { selectionCoords, hitbox, dimensions } = req.body;
+        const { width, height } = dimensions;
+        const { x, y } = selectionCoords;
+        const hitboxPad = hitbox / 2;
         const normalizedXLeft = parseFloat(((xLeft / 100) * dimensions.width).toFixed(2));
         const normalizedXRight = parseFloat(((xRight / 100) * dimensions.width).toFixed(2));
         const normalizedYTop = parseFloat(((yTop / 100) * dimensions.height).toFixed(2));
         const normalizedYBottom = parseFloat(((yBottom / 100) * dimensions.height).toFixed(2));
-        const { selectionCoords, hitbox, dimensions } = req.body;
-        const { width, height } = dimensions;
-        const { x, y } = selectionCoords;
-        const hitboxPad = hitbox / 2
-        if (x <= normalizedXRight + (hitboxPad / 2) && 
-            x >= normalizedXLeft - (hitboxPad / 2) && 
-            y >= normalizedYTop - (hitboxPad / 2) && 
-            y <= normalizedYBottom + (hitboxPad / 2)) 
+        
+        if (x <= normalizedXRight + hitboxPad && 
+            x >= normalizedXLeft - hitboxPad && 
+            y >= normalizedYTop - hitboxPad && 
+            y <= normalizedYBottom + hitboxPad) 
         {
-            return true;
+            return res.status(200).json(true);
         }
 
-        return false;
+        return res.status(200).json(false);
     } catch(err) {
         next(err);
+    };
+};
+
+// need to figure out how to validate both of these
+async function checkFoundCharacter (req, res, next) {
+    const { gameId, characterId } = req.params;
+
+    try {
+        const success = await db.addCharacterToFoundTable(Number(gameId), Number(characterId));
+
+        if (!success) {
+            return null
+        };
+
+        return res.status(200).json(success);
+    } catch(err) {
+        next(err)
+        return res.status(400).json('Already Found')
     };
 };
 
@@ -68,7 +91,18 @@ async function getCharacters(req, res, next) {
 
     try {
         const characters = await db.getCharactersForMap(mapId);
-        res.status(200).json(characters)
+        return res.status(200).json(characters)
+    } catch(err) {
+        next(err);
+    };
+};
+
+async function getFoundCharacters(req, res, next) {
+    const gameId = req.validatedId;
+
+    try {
+        const characters = await db.getCharactersFromFoundTable(gameId);
+        return res.status(200).json(characters.length);
     } catch(err) {
         next(err);
     };
@@ -76,13 +110,14 @@ async function getCharacters(req, res, next) {
 
 async function updateFinalScore(req, res, next) {
     const gameId = req.validatedId;
-    const { name, endTime, duration } = req.body;
+    const { userId, endTime, duration } = req.body;
 
     try {
-        const update = await db.updateGame(name, endTime, duration, gameId);
+        const update = await db.updateFinalScore(userId, endTime, duration, gameId);
+        return res.status(200).json(update)
     } catch(err) {
         if (err.code === 'P2025') {
-            const error = new Error('Comment Not Found');
+            const error = new Error('Failed updating game details');
             error.status = 404;
             return next(error);
         };
@@ -96,6 +131,8 @@ module.exports = {
     getMap,
     createGame,
     checkCoordinates,
+    checkFoundCharacter,
+    getFoundCharacters,
     getCharacters,
     updateFinalScore,
 }
