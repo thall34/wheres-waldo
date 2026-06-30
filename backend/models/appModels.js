@@ -27,20 +27,15 @@ async function getMap(id) {
     return map;
 };
 
-async function createGame(mapId) {
-    const game = await prisma.game.create({
-        data: {
-            userId: '',
-            mapId: mapId,
-        },
-    });
-
-    return game;
-};
-
 async function getCharacterById(id) {
     const character = await prisma.character.findUnique({
         where: { id: id },
+        select: {
+            xLeft: true,
+            xRight: true,
+            yTop: true,
+            yBottom: true,
+        },
     });
 
     return character;
@@ -58,17 +53,6 @@ async function getCharactersForMap(mapId) {
     return characters;
 };
 
-async function addCharacterToFoundTable(gameId, characterId) {
-    const add = await prisma.foundCharacter.create({
-        data: {
-            gameId: gameId,
-            characterId: characterId,
-        },
-    });
-
-    return add;
-};
-
 async function getCharactersFromFoundTable(gameId) {
     const characters = await prisma.foundCharacter.findMany({
         where: { gameId: gameId },
@@ -78,6 +62,28 @@ async function getCharactersFromFoundTable(gameId) {
     });
 
     return characters;
+};
+
+async function createGame(mapId) {
+    const game = await prisma.game.create({
+        data: {
+            userId: '',
+            mapId: mapId,
+        },
+    });
+
+    return game;
+};
+
+async function addCharacterToFoundTable(gameId, characterId) {
+    const add = await prisma.foundCharacter.create({
+        data: {
+            gameId: gameId,
+            characterId: characterId,
+        },
+    });
+
+    return add;
 };
 
 async function updateFinalScore(userId, endTime, duration, gameId) {
@@ -96,10 +102,10 @@ async function updateFinalScore(userId, endTime, duration, gameId) {
 module.exports = {
     getHighScores,
     getMap,
-    createGame,
     getCharacterById,
     getCharactersForMap,
-    addCharacterToFoundTable,
     getCharactersFromFoundTable,
+    createGame,
+    addCharacterToFoundTable,
     updateFinalScore,
 }

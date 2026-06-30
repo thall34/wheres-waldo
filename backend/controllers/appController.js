@@ -16,10 +16,34 @@ async function getMap(req, res, next) {
         const map = await db.getMap(id);
 
         if (!map) {
-            return null;
+            const error = new Error ('Failed to Fetch Map');
+            error.status = 404;
+            return next(error);
         };
 
         return res.status(200).json(map);
+    } catch(err) {
+        next(err);
+    };
+};
+
+async function getCharacters(req, res, next) {
+    const mapId = req.validatedId;
+
+    try {
+        const characters = await db.getCharactersForMap(mapId);
+        return res.status(200).json(characters);
+    } catch(err) {
+        next(err);
+    };
+};
+
+async function getFoundCharacters(req, res, next) {
+    const gameId = req.validatedId;
+
+    try {
+        const characters = await db.getCharactersFromFoundTable(gameId);
+        return res.status(200).json(characters.length);
     } catch(err) {
         next(err);
     };
@@ -32,7 +56,9 @@ async function createGame(req, res, next) {
         const game = await db.createGame(mapId);
 
         if (!game) {
-            return null;
+            const error = new Error ('Failed to Create Game');
+            error.status = 400;
+            return next(error);
         };
 
         return res.status(200).json(game);
@@ -44,15 +70,21 @@ async function checkCoordinates(req, res, next) {
     const id = req.validatedId;
 
     try {
-        const { xLeft, xRight, yTop, yBottom } = await db.getCharacterById(id);
+        const character = await db.getCharacterById(id);
+        if (!character) {
+            const error = new Error ('Failed to Fetch Character');
+            error.status = 404;
+            return next(error);
+        };
+
         const { selectionCoords, hitbox, dimensions } = req.body;
         const { width, height } = dimensions;
         const { x, y } = selectionCoords;
         const hitboxPad = hitbox / 2;
-        const normalizedXLeft = parseFloat(((xLeft / 100) * dimensions.width).toFixed(2));
-        const normalizedXRight = parseFloat(((xRight / 100) * dimensions.width).toFixed(2));
-        const normalizedYTop = parseFloat(((yTop / 100) * dimensions.height).toFixed(2));
-        const normalizedYBottom = parseFloat(((yBottom / 100) * dimensions.height).toFixed(2));
+        const normalizedXLeft = parseFloat(((character.xLeft / 100) * dimensions.width).toFixed(2));
+        const normalizedXRight = parseFloat(((character.xRight / 100) * dimensions.width).toFixed(2));
+        const normalizedYTop = parseFloat(((character.yTop / 100) * dimensions.height).toFixed(2));
+        const normalizedYBottom = parseFloat(((character.yBottom / 100) * dimensions.height).toFixed(2));
         
         if (x <= normalizedXRight + hitboxPad && 
             x >= normalizedXLeft - hitboxPad && 
@@ -76,33 +108,12 @@ async function checkFoundCharacter (req, res, next) {
         const success = await db.addCharacterToFoundTable(Number(gameId), Number(characterId));
 
         if (!success) {
-            return null
+            const error = new Error ('Failed to Add Character to Found Table');
+            error.status = 400;
+            return next(error);
         };
 
         return res.status(200).json(success);
-    } catch(err) {
-        next(err)
-        return res.status(400).json('Already Found')
-    };
-};
-
-async function getCharacters(req, res, next) {
-    const mapId = req.validatedId;
-
-    try {
-        const characters = await db.getCharactersForMap(mapId);
-        return res.status(200).json(characters)
-    } catch(err) {
-        next(err);
-    };
-};
-
-async function getFoundCharacters(req, res, next) {
-    const gameId = req.validatedId;
-
-    try {
-        const characters = await db.getCharactersFromFoundTable(gameId);
-        return res.status(200).json(characters.length);
     } catch(err) {
         next(err);
     };
@@ -117,7 +128,7 @@ async function updateFinalScore(req, res, next) {
         return res.status(200).json(update)
     } catch(err) {
         if (err.code === 'P2025') {
-            const error = new Error('Failed updating game details');
+            const error = new Error('Failed Updating Game Details');
             error.status = 404;
             return next(error);
         };
@@ -129,10 +140,10 @@ async function updateFinalScore(req, res, next) {
 module.exports = {
     getHighScores,
     getMap,
+    getFoundCharacters,
+    getCharacters,
     createGame,
     checkCoordinates,
     checkFoundCharacter,
-    getFoundCharacters,
-    getCharacters,
     updateFinalScore,
 }
