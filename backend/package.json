@@ -9,6 +9,9 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "seed": "node config/seed.js"
   },
+  "prisma": {
+    "seed": "node config/seed.js"
+  },
   "keywords": [],
   "author": "",
   "license": "ISC",
