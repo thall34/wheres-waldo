@@ -1,6 +1,6 @@
 async function getHighScores() {
     try {
-        const response = await fetch('${import.meta.env.VITE_API_URL}/api/game/top');
+        const response = await fetch(`${import.meta.env.VITE_API_URL}/api/game/top`);
 
         if (!response.ok) {
             return null;
