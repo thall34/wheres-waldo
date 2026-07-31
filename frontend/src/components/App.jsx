@@ -97,7 +97,7 @@ function App() {
     async function initializePage() {
       try {
         const currentMap = await getMap(1);
-        const characterData = await getCharacters(2);
+        const characterData = await getCharacters(1);
         const highScores = await getHighScores();
         setMap(currentMap);
         setCharacters(characterData);
