@@ -96,7 +96,7 @@ function App() {
   useEffect(() => {
     async function initializePage() {
       try {
-        const currentMap = await getMap(2);
+        const currentMap = await getMap(1);
         const characterData = await getCharacters(2);
         const highScores = await getHighScores();
         setMap(currentMap);
