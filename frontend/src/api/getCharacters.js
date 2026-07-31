@@ -1,6 +1,6 @@
 async function getCharacters(mapId) {
     try {
-        const response = await fetch(`http://localhost:3000/api/character/map/${mapId}`);
+        const response = await fetch(`${import.meta.env.VITE_API_URL}/api/character/map/${mapId}`);
 
         if (!response.ok) {
             return null;

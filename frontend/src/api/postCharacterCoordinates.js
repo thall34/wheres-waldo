@@ -1,6 +1,6 @@
 async function postCharacterCoordinates(id, characterData) {
     try {
-        const response = await fetch(`http://localhost:3000/api/character/${id}`, {
+        const response = await fetch(`${import.meta.env.VITE_API_URL}/api/character/${id}`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
