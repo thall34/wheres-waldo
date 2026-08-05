@@ -1,6 +1,7 @@
 const db = require('../models/appModels');
 const success = require('../utils/success');
 const failure = require('../utils/failure');
+const isCharacterFound = require('../utils/isCharacterFound');
 
 // Gets high scores from database
 async function getHighScores(req, res, next) {
@@ -75,7 +76,7 @@ async function createGame(req, res, next) {
 
     try {
         const game = await db.createGame(mapId);
-        return success(res, 200, 'Game created', game);
+        return success(res, 201, 'Game created', game);
     } catch(err) {
         if (err.code === 'P2002') {
             return next(failure(400, 'Game id already in use'));
@@ -96,32 +97,15 @@ async function checkCoordinates(req, res, next) {
         if (!character) {
             return next(failure(404, 'Character not found'));
         };
-
         // gets all the information from the frontend to calculate the selection box boundaries
         const { selectionCoords, hitbox, dimensions } = req.body;
-        // gets the width and height in pixels of the map from the frontend
-        const { width, height } = dimensions;
-        // gets the x and y of the center point of the selection box
-        const { x, y } = selectionCoords;
-        // gets the hitbox padding as the radius of the selection box in pixels
-        const hitboxPad = hitbox / 2;
-        // normalizes the bottom left, bottom right, top left and top right coordinates
-        // of the logged coordinates for the character in the database
-        const normalizedXLeft = parseFloat(((character.xLeft / 100) * width).toFixed(2));
-        const normalizedXRight = parseFloat(((character.xRight / 100) * width).toFixed(2));
-        const normalizedYTop = parseFloat(((character.yTop / 100) * height).toFixed(2));
-        const normalizedYBottom = parseFloat(((character.yBottom / 100) * height).toFixed(2));
-        // checks if the selection point is within the boundary of the normalized points with the hitbox pad
-        if (x <= normalizedXRight + hitboxPad && 
-            x >= normalizedXLeft - hitboxPad && 
-            y >= normalizedYTop - hitboxPad && 
-            y <= normalizedYBottom + hitboxPad) 
-        {
+        // checks if selection is within bounds of character coordinates in database
+        const found = isCharacterFound(character, selectionCoords, hitbox, dimensions);
+        if (found) {
             // Returns true if character coordinates are within the bounds of the selection box
-            return success(res, 200, 'Character found', true);
-        }
+            return success(res, 200, 'Character found');
+        };
         // Returns false if character coordinates are outside of the bounds of the selection box
-        // return success(res, 200, 'Character not found', false);
         return next(failure(404, 'Character not found'));
     } catch(err) {
         next(err);
@@ -129,7 +113,7 @@ async function checkCoordinates(req, res, next) {
 };
 
 // Creates a new row in the found character table with the active game and the selected character
-async function checkFoundCharacter (req, res, next) {
+async function addCharacterToFoundTable (req, res, next) {
     const gameId = req.validatedGameId;
     const characterId = req.validatedCharacterId;
 
@@ -144,11 +128,11 @@ async function checkFoundCharacter (req, res, next) {
         const character = await db.getCharacterById(characterId);
         // if character doesn't exist, returns a 404 status
         if (!character) {
-            return next(failure(404, 'Character not found'));
+            return next(failure(400, 'Incorrect selection'));
         };
         // if game and character exist, add character to found table with game ID
-        const creation = await db.addCharacterToFoundTable(gameId, characterId);
-        return success(res, 200, 'Character added to found table', creation);
+        const addCharacter = await db.addCharacterToFoundTable(gameId, characterId);
+        return success(res, 200, 'Character added to found table', addCharacter);
     } catch(err) {
         if (err.code === 'P2002') {
             return next(failure(400, 'Character already found'));
@@ -182,6 +166,6 @@ module.exports = {
     getCharacters,
     createGame,
     checkCoordinates,
-    checkFoundCharacter,
+    addCharacterToFoundTable,
     updateFinalScore,
 }

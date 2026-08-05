@@ -11,7 +11,7 @@ appRouter.get('/character/map/:id', validateId, appController.getCharacters);
 appRouter.get('/game/:id/found', validateId, appController.getFoundCharacters);
 appRouter.post('/game/:id', validateId, appController.createGame);
 appRouter.post('/character/:id', validateId, appController.checkCoordinates);
-appRouter.post('/game/:gameId/character/:characterId', validateGameId, validateCharacterId, appController.checkFoundCharacter);
+appRouter.post('/game/:gameId/character/:characterId', validateGameId, validateCharacterId, appController.addCharacterToFoundTable);
 appRouter.put('/game/final/:id', validateId, appController.updateFinalScore);
 
 module.exports = appRouter;
