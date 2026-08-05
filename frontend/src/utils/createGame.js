@@ -8,7 +8,7 @@ async function createGame(id, setGameState) {
             setGameState(null);
         };
 
-        setGameState(success);
+        setGameState(success.data);
     } catch (err) {
         setGameState(null);
     }

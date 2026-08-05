@@ -54,17 +54,17 @@ function App() {
         const confirmedNotFound = await postCharacterToFound(game.id, id);
         if (confirmedNotFound) {
           const tally = await getFoundCharacterCount(game.id);
-          setMessage(`found ${name}`)
-          setPoints(tally);
+          setMessage(`${name} found`)
+          setPoints(tally.data);
           setSelectionVisible(false);
           return;
         } else {
-          setMessage(`Already found ${name}`);
+          setMessage(`${name} already found`);
           setSelectionVisible(false);
           return;
         }
       } else {
-        setMessage(`did not find ${name}`)
+        setMessage(`${name} not found`)
         setSelectionVisible(false);
         return;
       }
@@ -87,7 +87,7 @@ function App() {
 
       setGame(null);
       setWin(false);
-      setHighScores(highScores);
+      setHighScores(highScores.data);
     } catch (err) {
       setError(err);
     };
@@ -96,12 +96,13 @@ function App() {
   useEffect(() => {
     async function initializePage() {
       try {
-        const currentMap = await getMap(1);
-        const characterData = await getCharacters(1);
+        // set these to 1 for production
+        const currentMap = await getMap(2);
+        const characterData = await getCharacters(2);
         const highScores = await getHighScores();
-        setMap(currentMap);
-        setCharacters(characterData);
-        setHighScores(highScores);
+        setMap(currentMap.data);
+        setCharacters(characterData.data);
+        setHighScores(highScores.data);
       } catch (err) {
         setMap(null);
         setCharacters([]);

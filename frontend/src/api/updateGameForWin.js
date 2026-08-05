@@ -1,5 +1,4 @@
 async function updateGameForWin(gameData) {
-    console.log(gameData);
     try {
         const response = await fetch(`${import.meta.env.VITE_API_URL}/api/game/final/${gameData.id}`, {
             method: 'PUT',

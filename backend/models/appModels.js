@@ -1,5 +1,6 @@
 const prisma = require('../config/db');
 
+// Gets top 10 high scores from the database
 async function getHighScores() {
     const highScores = await prisma.game.findMany({
         take: 10,
@@ -15,6 +16,7 @@ async function getHighScores() {
     return highScores;
 };
 
+// Gets a single map from the database
 async function getMap(id) {
     const map = await prisma.map.findUnique({
         where: { id: id },
@@ -27,6 +29,7 @@ async function getMap(id) {
     return map;
 };
 
+// Gets character coordinates for a single character
 async function getCharacterById(id) {
     const character = await prisma.character.findUnique({
         where: { id: id },
@@ -37,10 +40,22 @@ async function getCharacterById(id) {
             yBottom: true,
         },
     });
-
+    
     return character;
 };
 
+async function getGame(id) {
+    const game = await prisma.game.findUnique({
+        where: { id: id },
+        select: {
+            id: true,
+        },
+    });
+
+    return game;
+};
+
+// Gets all characters for a single map
 async function getCharactersForMap(mapId) {
     const characters = await prisma.character.findMany({
         where: { mapId: mapId },
@@ -53,6 +68,7 @@ async function getCharactersForMap(mapId) {
     return characters;
 };
 
+// Gets all characters that have currently been found in the active game
 async function getCharactersFromFoundTable(gameId) {
     const characters = await prisma.foundCharacter.findMany({
         where: { gameId: gameId },
@@ -64,6 +80,7 @@ async function getCharactersFromFoundTable(gameId) {
     return characters;
 };
 
+// Creates a new game instance in the database
 async function createGame(mapId) {
     const game = await prisma.game.create({
         data: {
@@ -75,6 +92,7 @@ async function createGame(mapId) {
     return game;
 };
 
+// Creates a new row in the found table for the active game and selected character
 async function addCharacterToFoundTable(gameId, characterId) {
     const add = await prisma.foundCharacter.create({
         data: {
@@ -86,6 +104,7 @@ async function addCharacterToFoundTable(gameId, characterId) {
     return add;
 };
 
+// Updates the final time score once all characters are found
 async function updateFinalScore(userId, endTime, duration, gameId) {
     const update = await prisma.game.update({
         where: { id: gameId },
@@ -103,6 +122,7 @@ module.exports = {
     getHighScores,
     getMap,
     getCharacterById,
+    getGame,
     getCharactersForMap,
     getCharactersFromFoundTable,
     createGame,
