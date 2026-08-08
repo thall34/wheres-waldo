@@ -3,7 +3,6 @@ const success = require('../utils/success');
 const failure = require('../utils/failure');
 const isCharacterFound = require('../utils/isCharacterFound');
 
-// gets all maps from the database
 async function getMaps(req, res, next) {
     try {
         const maps = await db.getMaps();

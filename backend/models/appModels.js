@@ -48,6 +48,17 @@ async function getCharacterById(id) {
     return character;
 };
 
+async function getGame(id) {
+    const game = await prisma.game.findUnique({
+        where: { id: id },
+        select: {
+            id: true,
+        },
+    });
+
+    return game;
+};
+
 // Creates a new game instance in the database
 async function createGame(mapId) {
     const game = await prisma.game.create({
@@ -89,6 +100,7 @@ async function updateFinalScore(userId, endTime, duration, gameId) {
 module.exports = {
     getMaps,
     getCharacterById,
+    getGame,
     createGame,
     addCharacterToFoundTable,
     updateFinalScore,
