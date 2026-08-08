@@ -3,68 +3,11 @@ const success = require('../utils/success');
 const failure = require('../utils/failure');
 const isCharacterFound = require('../utils/isCharacterFound');
 
-// Gets high scores from database
-async function getHighScores(req, res, next) {
+// gets all maps from the database
+async function getMaps(req, res, next) {
     try {
-        const highScores = await db.getHighScores();
-        return success(res, 200, 'High scores found', highScores);
-    } catch(err) {
-        next(err);
-    };
-};
-
-// Gets single map from database
-async function getMap(req, res, next) {
-    const id = req.validatedId;
-
-    try {
-        // checks if map exists in database
-        const map = await db.getMap(id);
-        // if map doesn't exist return a 404 status
-        if (!map) {
-            return next(failure(404, 'Map not found'));
-        };
-
-        return success(res, 200, 'Map found', map);
-    } catch(err) {
-        next(err);
-    };
-};
-
-// Gets characters for a single map
-async function getCharacters(req, res, next) {
-    const mapId = req.validatedId;
-
-    try {
-        // checks if map exists in database
-        const map = await db.getMap(mapId);
-        // if map doesn't exist return a 404 status
-        if (!map) {
-            return next(failure(404, 'Map not found'));
-        };
-
-        const characters = await db.getCharactersForMap(mapId);
-        return success(res, 200, 'Characters found', characters);
-    } catch(err) {
-        next(err);
-    };
-};
-
-// Gets the amount of characters found in the current game
-async function getFoundCharacters(req, res, next) {
-    const gameId = req.validatedId;
-
-    try {
-        // checks if game exists in database
-        const game = await db.getGame(gameId);
-        // if game doesn't exist return a 404 status
-        if (!game) {
-            return next(failure(404, 'Game not found'));
-        };
-
-        const characters = await db.getCharactersFromFoundTable(gameId);
-        // returns a 200 status with how many characters have been found
-        return success(res, 200, 'Amount of found characters', characters.length);
+        const maps = await db.getMaps();
+        return success(res, 200, 'Maps found', maps);
     } catch(err) {
         next(err);
     };
@@ -98,15 +41,15 @@ async function checkCoordinates(req, res, next) {
             return next(failure(404, 'Character not found'));
         };
         // gets all the information from the frontend to calculate the selection box boundaries
-        const { selectionCoords, hitbox, dimensions } = req.body;
+        const { x, y, hitbox, width, height } = req.body;
         // checks if selection is within bounds of character coordinates in database
-        const found = isCharacterFound(character, selectionCoords, hitbox, dimensions);
+        const found = isCharacterFound(character, x, y, hitbox, width, height);
         if (found) {
             // Returns true if character coordinates are within the bounds of the selection box
             return success(res, 200, 'Character found');
         };
         // Returns false if character coordinates are outside of the bounds of the selection box
-        return next(failure(404, 'Character not found'));
+        return next(failure(404, 'Character not found at coordinates'));
     } catch(err) {
         next(err);
     };
@@ -160,10 +103,7 @@ async function updateFinalScore(req, res, next) {
 };
 
 module.exports = {
-    getHighScores,
-    getMap,
-    getFoundCharacters,
-    getCharacters,
+    getMaps,
     createGame,
     checkCoordinates,
     addCharacterToFoundTable,

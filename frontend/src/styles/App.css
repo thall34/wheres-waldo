@@ -14,6 +14,17 @@ body {
     align-items: center;
 }
 
+.main-menu {
+    display: flex;
+    width: 100%;
+    justify-content: space-evenly;
+    align-items: center;
+}
+
+.map-container {
+    position: relative;
+}
+
 .topBar {
     display: flex;
     flex-direction: row;
@@ -29,7 +40,7 @@ body {
 
 .selection {
     border: 1px solid black;
-    display: none;
+    display: flex;
     position: absolute;
     background-color: rgba(0, 0, 0, 0.247);
 }
@@ -46,11 +57,11 @@ button {
     font-size: inherit;
 }
 
-.visible {
-    display: flex;
-}
-
 img {
     display: block;
     width: 100%;
+}
+
+.map-select {
+    width: 400px;
 }

@@ -41,5 +41,3 @@ Before installing, ensure you have the following software installed:
 ## Future improvements
 
 Finish CSS Styling
-Refactor backend and frontend with more helper functions
-Add multiple maps

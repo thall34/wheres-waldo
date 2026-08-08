@@ -1,10 +1,6 @@
 const normalizeCoordinate = require('./normalizeCoordinate');
 
-function isCharacterFound(character, selection, hitbox, dimensions) {
-    // gets the width and height in pixels of the map from the frontend
-    const { width, height } = dimensions;
-    // gets the x and y of the center point of the selection box
-    const { x, y } = selection;
+function isCharacterFound(character, x, y, hitbox, width, height) {
     // gets the hitbox padding as the radius of the selection box in pixels
     const hitboxPad = hitbox / 2;
     // normalizes the bottom left, bottom right, top left and top right coordinates

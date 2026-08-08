@@ -8,13 +8,13 @@ async function postCharacterToFound(gameId, characterId) {
         });
 
         if (!response.ok) {
-            return null;
+            throw new Error('Character already found')
         };
 
         const success = await response.json();
         return success;
     } catch (err) {
-        return err;
+        throw err;
     }
 }
 

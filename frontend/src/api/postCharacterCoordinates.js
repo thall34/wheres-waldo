@@ -9,13 +9,13 @@ async function postCharacterCoordinates(id, characterData) {
         });
 
         if (!response.ok) {
-            return null;
+            throw new Error('Character not found at coordinates')
         };
 
         const success = await response.json();
         return success;
     } catch (err) {
-        return err;
+        throw err;
     }
 }
 
