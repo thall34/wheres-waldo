@@ -76,7 +76,7 @@ function Gameboard({ game, map, characters, setWin, setGame }) {
                                 {characters.map((character) => (
                                         <button key={character.id} onClick={(e) => confirmCharacterFound(e, character.id, character.name)} className='selection-button'>
                                             {character.name}
-                                            <img src={`../../public/${character.name}.png`} alt={character.name} style={{ width: selection.hitbox / 4 }} />
+                                            <img src={`/${character.name}.png`} alt={character.name} style={{ width: selection.hitbox / 4 }} />
                                         </button>
                                 ))}
                             </div>

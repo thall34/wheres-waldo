@@ -54,6 +54,13 @@ Before installing, ensure you have the following software installed:
 12. **Navigate to the localhost in your browser**
 ```http://localhost:5173```
 
+## Live Preview
+
+### The app can be accessed live at the following link:
+https://wheres-waldo-liart.vercel.app/
+
 ## Future improvements
 
+Add character images to cloudinary and link them via database
+Add live link to readme
 More maps

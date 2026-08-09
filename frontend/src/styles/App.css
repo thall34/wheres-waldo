@@ -1,7 +1,7 @@
 @font-face {
     font-family: 'optima';
-    src: url('../../public/fonts/optima_extrablack-webfont.woff2') format('woff2'),
-         url('../../public/fonts/optima_extrablack-webfont.woff') format('woff');
+    src: url('/fonts/optima_extrablack-webfont.woff2') format('woff2'),
+         url('/fonts/optima_extrablack-webfont.woff') format('woff');
     font-weight: normal;
     font-style: normal;
 }
@@ -42,7 +42,7 @@ footer {
     width: 100%;
     padding: 5em 0em;
     place-items: center;
-    background-image: url('../../public/old-book.jpg');
+    background-image: url('/old-book.jpg');
     background-repeat: no-repeat;
     background-position: center center;
     background-size: cover;
