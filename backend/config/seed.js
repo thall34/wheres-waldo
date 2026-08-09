@@ -11,26 +11,26 @@ async function main() {
     await prisma.map.create({
         data: {
             name: 'Waldo Beach',
-            cloudinaryPath: 'https://res.cloudinary.com/desbleq8y/image/upload/v1782333081/waldo_ea1n4z.jpg',
-            cloudinaryId: 'waldo_ea1n4z',
+            cloudinaryPath: process.env.CLOUD_PATH_MAP1,
+            cloudinaryId: process.env.CLOUD_ID_MAP1,
             characters: {
                 create: [
                     {
-                        name: 'wilma',
+                        name: 'Wilma',
                         xLeft: 76.75,
                         xRight: 77.62,
                         yTop: 38.25,
                         yBottom: 40.5,
                     },
                     {
-                        name: 'waldo',
+                        name: 'Waldo',
                         xLeft: 60.98,
                         xRight: 62.93,
                         yTop: 34.75,
                         yBottom: 39.75,
                     },
                     {
-                        name: 'wizard',
+                        name: 'Wizard',
                         xLeft: 26.41,
                         xRight: 28.32,
                         yTop: 32.06,
@@ -38,27 +38,32 @@ async function main() {
                     },
                 ],
             },
+        },
+    });
+
+    await prisma.map.create({
+        data: {
             name: 'Waldo Racetrack',
-            cloudinaryPath: 'https://res.cloudinary.com/desbleq8y/image/upload/v1786194121/racetrack_htbsic.jpg',
-            cloudinaryId: 'racetrack_htbsic',
+            cloudinaryPath: process.env.CLOUD_PATH_MAP2,
+            cloudinaryId: process.env.CLOUD_ID_MAP2,
             characters: {
                 create: [
                     {
-                        name: 'wilma',
+                        name: 'Wilma',
                         xLeft: 24.49,
                         xRight: 25.66,
                         yTop: 71.19,
                         yBottom: 75,
                     },
                     {
-                        name: 'waldo',
+                        name: 'Waldo',
                         xLeft: 26.91,
                         xRight: 29.73,
                         yTop: 31.81,
                         yBottom: 37.25,
                     },
                     {
-                        name: 'wizard',
+                        name: 'Wizard',
                         xLeft: 60.47,
                         xRight: 63,
                         yTop: 84.94,

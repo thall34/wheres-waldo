@@ -9,11 +9,11 @@ function MapSelection({ setGame, setMap, setCharacters }) {
     async function createGame(map) {
         try {
             const success = await createNewGame(map.id);
-    
+
             if (!success) {
                 setGame(null);
             };
-    
+
             setGame(success.data);
             setMap(map);
             setCharacters(map.characters);
@@ -36,29 +36,28 @@ function MapSelection({ setGame, setMap, setCharacters }) {
     }, []);
 
     return (
-        <div className='app'>
-            <h1>Where's Waldo</h1>
-            <div className='main-menu'>
-            {maps.map((map) => (
-                <div key={map.id}>
-                    <img src={map.cloudinaryPath} className='map-select' />
-                    <button onClick={() => createGame(map)}>Start New Game</button>
-                    {map.games.length > 0 ? (
-                        <>
-                            <ol>
-                                {map.games.map((score, index) => (
-                                    <li key={index}>{scoreDisplay(score)}</li>
-                                ))}
-                            </ol>
-                        </>
-                    ) : (
-                        <h1>No High Scores Yet</h1>
-                    )}
-                    
-                </div>
-            ))}
+        <main>
+            <div className='map-select'>
+                {maps.map((map) => (
+                    <div key={map.id} className='map-card'>
+                        <img src={map.cloudinaryPath} className='map-image' />
+                        <button onClick={() => createGame(map)}>Start New Game</button>
+                        {map.games.length > 0 ? (
+                            <>
+                                <ol>
+                                    {map.games.map((score, index) => (
+                                        <li key={index}>{scoreDisplay(score)}</li>
+                                    ))}
+                                </ol>
+                            </>
+                        ) : (
+                            <p>No High Scores Yet</p>
+                        )}
+
+                    </div>
+                ))}
             </div>
-        </div>
+        </main>
     )
 }
 

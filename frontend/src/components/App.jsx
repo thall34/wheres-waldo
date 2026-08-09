@@ -3,6 +3,8 @@ import '../styles/App.css'
 import MapSelection from './MapSelection';
 import Gameboard from './Gameboard';
 import WinScreen from './WinScreen';
+import Header from './Header';
+import Footer from './Footer';
 
 function App() {
   const [characters, setCharacters] = useState([]);
@@ -14,7 +16,7 @@ function App() {
 
   if (error) {
     return (
-      <div>
+      <div className='app'>
         <h1>{error.message}</h1>
         <button onClick={() => setError(null)}>Return to Main Menu</button>
       </div>
@@ -23,18 +25,30 @@ function App() {
 
   if (win) {
     return (
-      <WinScreen game={game} setGame={setGame} setWin={setWin} />
+      <div className='app'>
+        <Header />
+        <WinScreen game={game} setGame={setGame} setWin={setWin} />
+        <Footer />
+      </div>
     )
   };
 
   if (!game) {
       return (
-        <MapSelection setGame={setGame} setMap={setMap} setCharacters={setCharacters} />
+        <div className='app'>
+          <Header />
+          <MapSelection setGame={setGame} setMap={setMap} setCharacters={setCharacters} />
+          <Footer />
+        </div>
       )
   };
 
   return (
-    <Gameboard game={game} map={map} characters={characters} setWin={setWin} setGame={setGame} />
+    <div className='app'>
+      <Header />
+      <Gameboard game={game} map={map} characters={characters} setWin={setWin} setGame={setGame} />
+      <Footer />
+    </div>
   )
 };
 

@@ -64,23 +64,27 @@ function Gameboard({ game, map, characters, setWin, setGame }) {
     };
 
     return (
-        <div className='app'>
-            <h1>Where's Waldo</h1>
-            <Topbar points={points} message={message} characters={characters} />
-            <div className='map-container' onClick={handleClick}>
-                <img src={map.cloudinaryPath} />
-                {selectionVisible && (
-                    <div className='selection' style={{ top: selection.y - (selection.hitbox / 2), left: selection.x - (selection.hitbox / 2), height: selection.hitbox, width: (selection.hitbox * 2) }}>
-                        <div style={{ height: selection.hitbox, width: selection.hitbox }}></div>
-                        <div className='buttons' style={{ height: selection.hitbox, width: selection.hitbox, fontSize: (selection.hitbox / 8) }}>
-                            {characters.map((character) => (
-                                <button key={character.id} onClick={(e) => confirmCharacterFound(e, character.id, character.name)}>{character.name}</button>
-                            ))}
+        <main>
+            <div className='gameboard'>
+                <Topbar points={points} message={message} characters={characters} />
+                <div className='map-container' onClick={handleClick}>
+                    <img src={map.cloudinaryPath} />
+                    {selectionVisible && (
+                        <div className='selection' style={{ top: selection.y - (selection.hitbox / 2), left: selection.x - (selection.hitbox / 2), height: selection.hitbox, width: (selection.hitbox * 2) }}>
+                            <div style={{ height: selection.hitbox, width: selection.hitbox }}></div>
+                            <div className='buttons' style={{ height: selection.hitbox, width: selection.hitbox, fontSize: (selection.hitbox / 8) }}>
+                                {characters.map((character) => (
+                                        <button key={character.id} onClick={(e) => confirmCharacterFound(e, character.id, character.name)} className='selection-button'>
+                                            {character.name}
+                                            <img src={`../../public/${character.name}.png`} alt={character.name} style={{ width: selection.hitbox / 4 }} />
+                                        </button>
+                                ))}
+                            </div>
                         </div>
-                    </div>
-                )}
+                    )}
+                </div>
             </div>
-        </div>
+        </main>
     )
 };
 
